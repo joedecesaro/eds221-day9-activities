@@ -37,12 +37,33 @@ mack_creek_lengths <- mack_creek_vertebrates %>%
   clean_names() %>% 
   select(year:sampledate) %>% 
   filter(section == "CC") %>% 
-  mutate(across(where(is.character, tolower))) %>% 
+  mutate(across(.cols = where(is.character), .fns = tolower)) %>% 
   drop_na(species) %>% 
   group_by(species) %>% 
   summarize(mean_length_cm = mean(length1, na.rm = TRUE),
             sd_length_cm = sd(length1, na.rm = TRUE)) %>% 
   ungroup()
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+
+df <- tribble(
+  ~Name, ~Hike, ~Length,
+  "Paloma", "SB", 40,
+  "Halina", "VC", 15,
+  "Mia", "TC", 25
+)
+
+df
+
+df %>% 
+  clean_names() %>% 
+  mutate(across(.cols = where(is.character), .fns = tolower))
+
+#To use the across function, make sure you specify your arguments are matched up with the correct columns (.cols) and functions (.fns). Also, make sure your parenthesis do not get mixed up as they can easily get lost in the mutation.
 ```
 
 ### reprex 2
@@ -55,10 +76,21 @@ mack_creek_vertebrates %>%
   clean_names() %>% 
   filter(species == "ONCL") %>% 
   ggplot(aes(x = length1, y = weight)) +
-         geom_point(aes(shape = 12), color = "purple") +
+         geom_point(shape = 12, color = "purple") +
          theme_minimal() +
          labs(x = "Cutthroat trout length (cm)",
               y = "Weight (g)")
+```
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+
+penguins %>% 
+  filter(species == "Gentoo") %>% 
+  ggplot(aes( x = body_mass_g, y = flipper_length_mm)) +
+  geom_point(shape = 3, color = "red")
+
+# When using the aes() within geom_point() you must connect it to a variable within the data frame. For the example above you could not do the following, geom_point(aes(shape = 3)), but you could do geom_ooint(aes(color = island)).
 ```
 
 ## End
